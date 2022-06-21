@@ -5,7 +5,7 @@ function Main(props) {
   const currentUser = React.useContext(CurrentUserContext);
 
   return (
-    <main className="content">
+    <div>
       <section className="profile">
         <div className="profile__avatar">
           <div className="profile__picture" style={{ backgroundImage: `url(${currentUser.avatar})` }} alt="Profile Picture" />
@@ -22,7 +22,7 @@ function Main(props) {
         {props.cards}
       </section>
         {props.children}
-    </main>
+    </div>
   )
 }
 export default Main;

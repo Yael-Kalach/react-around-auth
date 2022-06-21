@@ -100,6 +100,16 @@
 
 @import url(./blocks/elements/__counter/elements__counter.css);
 
+@import url(./blocks/registration-form/registration-form.css);
+
+@import url(./blocks/registration-form/__title/registration-form__title.css);
+
+@import url(./blocks/registration-form/__input/registration-form__input.css);
+
+@import url(./blocks/registration-form/__fieldset/registration-form__fieldset.css);
+
+@import url(./blocks/registration-form/__button/registration-form__button.css);
+
 @import url(./blocks/footer/footer.css);
 
 @import url(./blocks/footer/__copyrights/footer__copyrights.css);

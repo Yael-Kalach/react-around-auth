@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://api.nomoreparties.co';
+export const BASE_URL = 'https://register.nomoreparties.co';
 
 export const register = (username, password, email) => {
     return fetch(`${BASE_URL}/signup`, {

@@ -7,9 +7,14 @@ import PopupWithForm from './PopupWithForm';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
+import ProtectedRoute from './ProtectedRoute';
+import Login from './Login';
+import Register from './Register';
+import InfoToolTip from './InfoToolTip';
 import api from '../utils/api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false)
@@ -19,6 +24,7 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [cards, setCards] = React.useState([])
   const [currentUser, setCurrentUser] = React.useState({});
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false)
 
   React.useEffect(() => {
     api.getUserInformation()
@@ -36,6 +42,10 @@ function App() {
       })
       .catch((error) => console.log(error));
   }, []);
+
+  function handleLogin() {
+    setIsLoggedIn(true)
+  }
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((user) => user._id === currentUser._id);
@@ -115,34 +125,39 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <Header />
-        <Main 
-          onDeletePlaceClick={handleDeletePlaceClick} 
-          onEditAvatarClick={handleEditAvatarClick} 
-          onEditProfileClick={handleEditProfileClick} 
-          onAddPlaceClick={handleAddPlaceClick} 
-          avatar={currentUser.avatar}
-          name={currentUser.name}
-          about={currentUser.about}
-          cards={cards.map((card) => (<Card 
-            key={card._id}
-            card={card}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-          />))} 
-        >
+          <main className="content">
+          <ProtectedRoute path="/main" loggedIn={isLoggedIn} component={Main} >
+            <Main 
+              onDeletePlaceClick={handleDeletePlaceClick} 
+              onEditAvatarClick={handleEditAvatarClick} 
+              onEditProfileClick={handleEditProfileClick} 
+              onAddPlaceClick={handleAddPlaceClick} 
+              avatar={currentUser.avatar}
+              name={currentUser.name}
+              about={currentUser.about}
+              cards={cards.map((card) => (<Card 
+                key={card._id}
+                card={card}
+                onCardClick={handleCardClick}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDelete}
+              />))} 
+            >
 
-          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onSubmitCard={handleAddPlaceSubmit} />
+              <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onSubmitCard={handleAddPlaceSubmit} />
 
-          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+              <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
 
-          <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+              <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
-          <PopupWithForm name='delete-card' title='Are you sure?' isOpen={isDeletePlacePopupOpen} onClose={closeAllPopups} buttonText='Yes' />
+              <PopupWithForm name='delete-card' title='Are you sure?' isOpen={isDeletePlacePopupOpen} onClose={closeAllPopups} buttonText='Yes' />
 
-          <ImagePopup isOpen={selectedCard} onClose={closeAllPopups} card={selectedCard} />
+              <ImagePopup isOpen={selectedCard} onClose={closeAllPopups} card={selectedCard} />
 
-        </Main>
+            </Main>
+            </ProtectedRoute>
+          </main>
+
         <Footer />
       </div>
     </CurrentUserContext.Provider>

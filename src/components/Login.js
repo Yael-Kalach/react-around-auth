@@ -44,11 +44,11 @@ class Login extends React.Component {
     <form name="form" onSubmit={this.handleSubmit} className="registration-form">
       <h2 className="registration-form__title">Log in</h2>
       <fieldset className="registration-form__fieldset">
-        <input id="email-input" type="email" name="email" placeholder="Email" value={email} onChange={handleChangeName} className="registration-form__input_type_name registration-form__input" required minLength="2" maxLength="40" />
+        <input id="email-input" type="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} className="registration-form__input_type_name registration-form__input" required minLength="2" maxLength="40" />
         <span id="email-input-error" className="registration-form__error"></span>
-        <input id="password-input" type="password" name="password" placeholder="Password" value={password} onChange={handleChangeAbout} className="registration-form__input_type_about registration-form__input" required minLength="2" maxLength="40" />
+        <input id="password-input" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} className="registration-form__input_type_about registration-form__input" required minLength="2" maxLength="40" />
         <span id="password-input-error" className="registration-form__error"></span>
-        <button type="submit" aria-label="save" className="registration-form__button">{props.buttonText}</button>
+        <button type="submit" aria-label="save" className="registration-form__button">Log in</button>
       </fieldset>
       <Link to="/register" className="registration-form__link">Not a member yet? Sign up here!</Link>
     </form>
