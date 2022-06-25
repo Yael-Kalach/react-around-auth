@@ -1,11 +1,14 @@
 import logo from '../images/header-assets/logo.svg'
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-function Header() {
+function Header(props) {
   return(
     <header className="header">
       <img className="header__logo" src={logo} alt="Around the U.S. Logo" />
-      <Link to="/register" className="header__link"></Link>
+      <div>
+        <NavLink to="/" className="header__link"></NavLink>
+        {props.isLoggedIn ? <p>{props.userEmail}</p> : ''}
+      </div>
     </header>
   )
 }

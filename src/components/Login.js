@@ -1,58 +1,60 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import * as auth from '../auth.js';
+import { Link } from 'react-router-dom';
+import { signIn as auth} from '../auth.js';
 
-class Login extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        email: '',
-        password: ''
-      }
-      this.handleChange = this.handleChange.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
-    }
-  
-    handleChange(e) {
-      const { name, value } = e.target;
-      this.setState({
-        [name]: value
-      });
-    }
-  
-    handleSubmit(e) {
-      e.preventDefault();
-      if (!this.state.email || !this.state.password) {
-        return;
-      }
-      auth.authorize(this.state.email, this.state.password)
-        .then((data) => {
-          if (data.jwt) {
-            this.setState({
-              email: '',
-              password: ''
-            }, () => {
-              this.props.handleLogin();
-              this.props.history.push('/diary');
-            })
-          }
-        })
-        .catch(err => console.log(err));
-    }
-    
-  render(){
-    <form name="form" onSubmit={this.handleSubmit} className="registration-form">
-      <h2 className="registration-form__title">Log in</h2>
-      <fieldset className="registration-form__fieldset">
-        <input id="email-input" type="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} className="registration-form__input_type_name registration-form__input" required minLength="2" maxLength="40" />
-        <span id="email-input-error" className="registration-form__error"></span>
-        <input id="password-input" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} className="registration-form__input_type_about registration-form__input" required minLength="2" maxLength="40" />
-        <span id="password-input-error" className="registration-form__error"></span>
-        <button type="submit" aria-label="save" className="registration-form__button">Log in</button>
-      </fieldset>
-      <Link to="/register" className="registration-form__link">Not a member yet? Sign up here!</Link>
-    </form>
+function Login (props) {
+  const [email, setEmail] = React.useState();
+  const [password, setPassword] = React.useState();
+  const history = React.useHistory()
+
+  const onChangeEmail = (e) => {
+    setEmail(e.target.value)
   }
+
+  const onChangePassword = (e) => {
+    setPassword(e.target.value)
+  }
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    if (!email || !password) {
+        return;
+    } 
+    else {
+      auth.authorize(email, password)
+          .then((res) => {
+            if (res.jwt) {
+                setEmail('');
+                setPassword('');
+
+                props.handleLogin();
+                history.push('/profile');
+            }
+          })
+          .catch(err => {
+            if(err.statusCode === 400) {
+              console.log('one or more of the fields were not provided');
+            }
+            if(err.statusCode === 401) {
+              console.log('the user with the specified email not found');
+            }
+          });
+    }
+  }
+
+  return (
+  <form name="form" onSubmit={handleSubmit} className="registration-form">
+    <h2 className="registration-form__title">Log in</h2>
+    <fieldset className="registration-form__fieldset">
+      <input id="email-input" type="email" name="email" placeholder="Email" value={email} onChange={onChangeEmail} className="registration-form__input_type_name registration-form__input" required minLength="2" maxLength="40" />
+      <span id="email-input-error" className="registration-form__error"></span>
+      <input id="password-input" type="password" name="password" placeholder="Password" value={password} onChange={onChangePassword} className="registration-form__input_type_about registration-form__input" required minLength="2" maxLength="40" />
+      <span id="password-input-error" className="registration-form__error"></span>
+      <button type="submit" aria-label="save" className="registration-form__button">Log in</button>
+    </fieldset>
+    <Link to="/register" className="registration-form__link">Not a member yet? Sign up here!</Link>
+  </form>)
+  
 }
   
-export default withRouter(Login);
+export default Login;

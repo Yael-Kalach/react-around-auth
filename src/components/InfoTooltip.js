@@ -9,8 +9,8 @@ function InfoToolTip(props) {
         <div className={overlayName} onClick={props.onClose}></div>
         <div className={containerName}>
           <button type="button" aria-label="close" className={closeButtonName} onClick={props.onClose}></button>
-          <img className="info-popup__image" />
-
+          <img className={`info-popup__image ${props.isSuccessful ? 'info-popup__image_success' : 'info-popup__image_error'}`} />
+          <p className="info-popup__caption">{props.isSuccessful ? `Success! You have now been registered.` : `Oops, something went wrong! Please try again.`}</p>
         </div>
       </div>
     ) 

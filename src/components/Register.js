@@ -1,52 +1,44 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import * as auth from '../auth.js';
+import { Link } from 'react-router-dom';
+import { register as auth} from '../auth.js';
 
-class Register extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      calGoal: ''
-    }
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+function Register (props){
+
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
     
-  handleChange = (e) => {
-    const { name, value } = e.target;
-    this.setState({
-      [name]: value
-    });
+  const onChangeEmail = (e) => {
+    setEmail(e.target.value)
   }
-    
-  handleSubmit = (e) => {
+
+  const onChangePassword = (e) => {
+    setPassword(e.target.value)
+  }
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (this.state.password === this.state.confirmPassword) {
-      auth.register(this.state.username, this.state.password, this.state.email).then((res) => {
-        if (res.statusCode !== 400) {
-          this.props.history.push('/login');
-        }
-      });
-    }
+    auth.register(setPassword, setEmail).then((res) => {
+      if (res.statusCode !== 400) {
+        props.history.push('/login');
+      } else {
+        console.log('one of the fields was filled in incorrectly');
+      }
+    });
   }    
-    
-  render(){
-    <form name="form" onSubmit={this.handleSubmit} className="registration-form">
-      <h2 className="registration-form__title">Sign up</h2>
-      <fieldset className="registration-form__fieldset">
-        <input id="email-input" type="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} className="registration-form__input_type_name registration-form__input" required minLength="2" maxLength="40" />
-        <span id="email-input-error" className="registration-form__error"></span>
-        <input id="password-input" type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange} className="registration-form__input_type_about registration-form__input" required minLength="2" maxLength="40" />
-        <span id="password-input-error" className="registration-form__error"></span>
-        <button type="submit" aria-label="save" className="registration-form__button">Sign up</button>
-      </fieldset>
-      <Link to="/register" className="registration-form__link">Not a member yet? Sign up here!</Link>
-    </form>
-  }
+  
+  return (
+  <form name="form" onSubmit={handleSubmit} className="registration-form">
+    <h2 className="registration-form__title">Sign up</h2>
+    <fieldset className="registration-form__fieldset">
+      <input id="email-input" type="email" name="email" placeholder="Email" value={email} onChange={onChangeEmail} className="registration-form__input_type_name registration-form__input" required minLength="2" maxLength="40" />
+      <span id="email-input-error" className="registration-form__error"></span>
+      <input id="password-input" type="password" name="password" placeholder="Password" value={password} onChange={onChangePassword} className="registration-form__input_type_about registration-form__input" required minLength="2" maxLength="40" />
+      <span id="password-input-error" className="registration-form__error"></span>
+      <button type="submit" aria-label="save" className="registration-form__button">Sign up</button>
+    </fieldset>
+    <Link to="/login" className="registration-form__link">Already a member? Log in here!</Link>
+  </form>)
+  
 }
   
-export default withRouter(Register);
+export default Register;

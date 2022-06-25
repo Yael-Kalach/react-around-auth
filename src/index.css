@@ -50,8 +50,6 @@
 
 @import url(./blocks/delete-card-popup/__container/delete-card-popup__container.css);
 
-@import url(./blocks/delete-card-form/delete-card-form.css);
-
 @import url(./blocks/delete-card-form/__title/delete-card-form__title.css);
 
 @import url(./blocks/delete-card-form/__button/delete-card-form__button.css);
@@ -109,6 +107,16 @@
 @import url(./blocks/registration-form/__fieldset/registration-form__fieldset.css);
 
 @import url(./blocks/registration-form/__button/registration-form__button.css);
+
+@import url(./blocks/info-popup/info-popup.css);
+
+@import url(./blocks/info-popup/__caption/info-popup__caption.css);
+
+@import url(./blocks/info-popup/__image/info-popup__image.css);
+
+@import url(./blocks/info-popup/__image/_error/info-popup__image_error.css);
+
+@import url(./blocks/info-popup/__image/_success/info-popup__image_success.css);
 
 @import url(./blocks/footer/footer.css);
 
