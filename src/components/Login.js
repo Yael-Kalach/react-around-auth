@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { signIn as auth} from '../auth.js';
+import * as auth from '../auth.js';
 
 function Login (props) {
   const [email, setEmail] = React.useState();
@@ -28,15 +28,16 @@ function Login (props) {
                 setPassword('');
 
                 props.handleLogin();
-                history.push('/profile');
+                history.push('/');
             }
           })
           .catch(err => {
             if(err.statusCode === 400) {
               console.log('one or more of the fields were not provided');
-            }
-            if(err.statusCode === 401) {
-              console.log('the user with the specified email not found');
+            }else{
+              if(err.statusCode === 401) {
+                console.log('the user with the specified email not found');
+              }
             }
           });
     }
@@ -52,7 +53,7 @@ function Login (props) {
       <span id="password-input-error" className="registration-form__error"></span>
       <button type="submit" aria-label="save" className="registration-form__button">Log in</button>
     </fieldset>
-    <Link to="/register" className="registration-form__link">Not a member yet? Sign up here!</Link>
+    <Link to="/signup" className="registration-form__link">Not a member yet? Sign up here!</Link>
   </form>)
   
 }

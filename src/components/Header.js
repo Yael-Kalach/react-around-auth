@@ -6,8 +6,8 @@ function Header(props) {
     <header className="header">
       <img className="header__logo" src={logo} alt="Around the U.S. Logo" />
       <div>
-        <NavLink to="/" className="header__link"></NavLink>
-        {props.isLoggedIn ? <p>{props.userEmail}</p> : ''}
+        {props.isLoggedIn ? <button onClick={props.logout} className="header__link">Log out</button> : <NavLink to="/" className="header__link"></NavLink>}
+        {props.isLoggedIn ? <p>{props.email}</p> : ''}
       </div>
     </header>
   )

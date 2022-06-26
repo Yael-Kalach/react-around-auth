@@ -15,8 +15,11 @@ import api from '../utils/api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
 import { Route, Routes, Navigate, Router } from 'react-router-dom';
+import * as auth from '../auth.js';
 
 function App() {
+  const navigate = React.useNavigate();
+
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false)
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false)
@@ -120,59 +123,102 @@ function App() {
       .catch(console.log)
   }
 
+  function handleRegistration() {
+    auth.register(email, password)
+      .then((res) => {
+        setIsRegistrationSuccessful(true)
+        setIsToolTipOpen(!isToolTipOpen)
+        navigate.push('/signin')
+      })
+      .catch((err) => {
+        console.log(`Something is not working... Error: ${err}`);
+        setIsRegistrationSuccessful(false);
+        setIsToolTipOpen(!isToolTipOpen)
+      })
+  }
+
   function handleLogin() {
-    setIsLoggedIn(true)
-    setIsRegistrationSuccessful(!isRegistrationSuccessful)
-    setIsToolTipOpen(!isToolTipOpen)
+    auth.signIn(email, password)
+      .then((res) => {
+        setIsLoggedIn(true)
+        setIsRegistrationSuccessful(true)
+        setIsToolTipOpen(!isToolTipOpen)
+        navigate.push('/')
+        console.log(`Logged in successfully: ${localStorage}`);
+      })
   }
 
   function handleLogout() {
-    setIsLoggedIn(false)
+    localStorage.removeItem('jwt');
+    setIsLoggedIn(false);
+    console.log(`Logged out successfully: ${localStorage}`);
   }
+
+  React.useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      auth.checkToken(jwt)
+        .then((res) => {
+          if (res) {
+            setIsLoggedIn(true)
+            setCurrentUser(res);
+            history.push('/main') 
+        }
+      })
+      .catch((err) => {
+        setIsRegistrationSuccessful(false);
+        setIsToolTipOpen(!isToolTipOpen);
+        console.log(`Something is not working... Error: ${err}`);
+      })
+    }
+  }, [isLoggedIn]);
+
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <Router>
-          <Header />
-          <main className="content">
-            <ProtectedRoute destination="/main" loggedIn={isLoggedIn} component={Main} >
-              <Main 
-                onDeletePlaceClick={handleDeletePlaceClick} 
-                onEditAvatarClick={handleEditAvatarClick} 
-                onEditProfileClick={handleEditProfileClick} 
-                onAddPlaceClick={handleAddPlaceClick} 
-                avatar={currentUser.avatar}
-                name={currentUser.name}
-                about={currentUser.about}
-                cards={cards.map((card) => (<Card 
-                  key={card._id}
-                  card={card}
-                  onCardClick={handleCardClick}
-                  onCardLike={handleCardLike}
-                  onCardDelete={handleCardDelete}
-                />))} 
-              >
+          <Header email={currentUser.email} logout={handleLogout} />
+          <Routes>
+            <main className="content">
+              <Route exact path="/" loggedIn={isLoggedIn}>
+                <ProtectedRoute destination="/main" loggedIn={isLoggedIn} component={Main} >
+                  <Main 
+                    onDeletePlaceClick={handleDeletePlaceClick} 
+                    onEditAvatarClick={handleEditAvatarClick} 
+                    onEditProfileClick={handleEditProfileClick} 
+                    onAddPlaceClick={handleAddPlaceClick} 
+                    avatar={currentUser.avatar}
+                    name={currentUser.name}
+                    about={currentUser.about}
+                    cards={cards.map((card) => (<Card 
+                      key={card._id}
+                      card={card}
+                      onCardClick={handleCardClick}
+                      onCardLike={handleCardLike}
+                      onCardDelete={handleCardDelete}
+                    />))} 
+                  >
 
-                <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onSubmitCard={handleAddPlaceSubmit} />
+                    <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onSubmitCard={handleAddPlaceSubmit} />
 
-                <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+                    <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
 
-                <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+                    <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
-                <PopupWithForm name='delete-card' title='Are you sure?' isOpen={isDeletePlacePopupOpen} onClose={closeAllPopups} buttonText='Yes' />
+                    <PopupWithForm name='delete-card' title='Are you sure?' isOpen={isDeletePlacePopupOpen} onClose={closeAllPopups} buttonText='Yes' />
 
-                <ImagePopup isOpen={selectedCard} onClose={closeAllPopups} card={selectedCard} />
+                    <ImagePopup isOpen={selectedCard} onClose={closeAllPopups} card={selectedCard} />
 
-              </Main>
-            </ProtectedRoute>
-            <Routes>
-              <Route path="/register" >
+                  </Main>
+                </ProtectedRoute>
+              </Route>
+              <Route path="/signup" >
                 <Register>
                   <InfoToolTip isSuccessful={isRegistrationSuccessful} isOpen={isToolTipOpen} onClose={closeAllPopups} />
                 </Register>
               </Route>
-              <Route path="/login">
+              <Route path="/signin">
                 <Login handleLogin={handleLogin}>
                   <InfoToolTip isSuccessful={isRegistrationSuccessful} isOpen={isToolTipOpen} onClose={closeAllPopups} />  
                 </Login> 
@@ -180,8 +226,8 @@ function App() {
               <Route exact path="/">
                 {isLoggedIn ? <Navigate to="/main" /> : <Navigate to="/login" />}
               </Route>
-            </Routes>
-          </main>
+            </main>
+          </Routes>
         </Router>
         <Footer />
       </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { register as auth} from '../auth.js';
+import * as auth from '../auth.js';
 
 function Register (props){
 
@@ -18,10 +18,12 @@ function Register (props){
   const handleSubmit = (e) => {
     e.preventDefault();
     auth.register(setPassword, setEmail).then((res) => {
-      if (res.statusCode !== 400) {
+      if (res.statusCode === 200) {
         props.history.push('/login');
       } else {
-        console.log('one of the fields was filled in incorrectly');
+        if (res.statusCode === 400) {
+          console.log('one of the fields was filled in incorrectly');
+        }
       }
     });
   }    
@@ -36,7 +38,7 @@ function Register (props){
       <span id="password-input-error" className="registration-form__error"></span>
       <button type="submit" aria-label="save" className="registration-form__button">Sign up</button>
     </fieldset>
-    <Link to="/login" className="registration-form__link">Already a member? Log in here!</Link>
+    <Link to="/signin" className="registration-form__link">Already a member? Log in here!</Link>
   </form>)
   
 }
