@@ -14,11 +14,11 @@ import InfoToolTip from './InfoToolTip';
 import api from '../utils/api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
-import { Route, Routes, Navigate, Router } from 'react-router-dom';
-import * as auth from '../auth.js';
+import { Route, Routes, Navigate, Router, useNavigate } from 'react-router-dom';
+import {register, signIn, checkToken} from '../utils/auth.js';
 
 function App() {
-  const navigate = React.useNavigate();
+  const navigate = useNavigate();
 
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false)
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
@@ -123,8 +123,8 @@ function App() {
       .catch(console.log)
   }
 
-  function handleRegistration() {
-    auth.register(email, password)
+  function handleRegistration({email, password}) {
+    register(email, password)
       .then((res) => {
         setIsRegistrationSuccessful(true)
         setIsToolTipOpen(!isToolTipOpen)
@@ -137,8 +137,8 @@ function App() {
       })
   }
 
-  function handleLogin() {
-    auth.signIn(email, password)
+  function handleLogin({email, password}) {
+    signIn(email, password)
       .then((res) => {
         setIsLoggedIn(true)
         setIsRegistrationSuccessful(true)
@@ -157,19 +157,19 @@ function App() {
   React.useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
-      auth.checkToken(jwt)
+      checkToken(jwt)
         .then((res) => {
           if (res) {
             setIsLoggedIn(true)
             setCurrentUser(res);
-            history.push('/main') 
-        }
-      })
-      .catch((err) => {
-        setIsRegistrationSuccessful(false);
-        setIsToolTipOpen(!isToolTipOpen);
-        console.log(`Something is not working... Error: ${err}`);
-      })
+            navigate.push('/main') 
+          }
+        })
+        .catch((err) => {
+          setIsRegistrationSuccessful(false);
+          setIsToolTipOpen(!isToolTipOpen);
+          console.log(`Something went wrong! Error: ${err}`);
+        })
     }
   }, [isLoggedIn]);
 

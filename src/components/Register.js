@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import * as auth from '../auth.js';
+import { Link, useNavigate } from 'react-router-dom';
+import { register } from '../utils/auth.js';
 
 function Register (props){
-
+  const navigate = useNavigate();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
     
@@ -17,9 +17,9 @@ function Register (props){
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    auth.register(setPassword, setEmail).then((res) => {
+    register(setPassword, setEmail).then((res) => {
       if (res.statusCode === 200) {
-        props.history.push('/login');
+        navigate.push('/login');
       } else {
         if (res.statusCode === 400) {
           console.log('one of the fields was filled in incorrectly');

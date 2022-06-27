@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import * as auth from '../auth.js';
+import { signIn } from '../utils/auth.js';
 
 function Login (props) {
   const [email, setEmail] = React.useState();
@@ -21,7 +21,7 @@ function Login (props) {
         return;
     } 
     else {
-      auth.authorize(email, password)
+      signIn(email, password)
           .then((res) => {
             if (res.jwt) {
                 setEmail('');
