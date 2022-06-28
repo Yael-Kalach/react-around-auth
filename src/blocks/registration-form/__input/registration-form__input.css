@@ -1,6 +1,7 @@
 .registration-form__input {
     border: 0;
     border-bottom: 1px solid #fff;
+    color: #fff;
     background-color: transparent;
     width: 358px;
     font-size: 14px;
