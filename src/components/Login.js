@@ -1,12 +1,10 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { signIn } from '../utils/auth.js';
+import { Link } from 'react-router-dom';
 import InfoToolTip from './InfoToolTip'
 
 function Login (props) {
   const [email, setEmail] = React.useState();
   const [password, setPassword] = React.useState();
-  const navigate = useNavigate();
 
   const onChangeEmail = (e) => {
     setEmail(e.target.value)
@@ -18,31 +16,8 @@ function Login (props) {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    if (!email || !password) {
-        return;
-    } 
-    else {
-      signIn(email, password)
-          .then((res) => {
-            if (res.jwt) {
-                setEmail('');
-                setPassword('');
-
-                props.handleLogin();
-                navigate.push('/');
-            }
-          })
-          .catch(err => {
-            if(err.statusCode === 400) {
-              console.log('one or more of the fields were not provided');
-            }else{
-              if(err.statusCode === 401) {
-                console.log('the user with the specified email not found');
-              }
-            }
-          });
-    }
-  }
+    props.handleLogin(email, password);
+}
 
   return (
     <div>

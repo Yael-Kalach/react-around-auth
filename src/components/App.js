@@ -123,27 +123,33 @@ function App() {
       .catch(console.log)
   }
 
-  // function handleRegistration({email, password}) {
-  //   register(email, password)
-  //     .then((res) => {
-  //       setIsRegistrationSuccessful(true)
-  //       setIsToolTipOpen(!isToolTipOpen)
-  //       navigate.push('/signin')
-  //     })
-  //     .catch((err) => {
-  //       console.log(`Something is not working... Error: ${err}`);
-  //       setIsRegistrationSuccessful(false);
-  //       setIsToolTipOpen(!isToolTipOpen)
-  //     })
-  // }
+  function handleRegistration({email, password}) {
+    register(email, password)
+      .then((res) => {
+        console.log(res)
+        setIsRegistrationSuccessful(true)
+        setIsToolTipOpen(!isToolTipOpen)
+        navigate('/signin')
+      })
+      .catch((err) => {
+        if (err.status === 400) {
+        console.log('400 - one of the fields was filled incorrectly');
+        } else {
+        console.log(`Something is not working... Error: ${err}`);
+        }
+        setIsRegistrationSuccessful(false);
+        setIsToolTipOpen(!isToolTipOpen)
+      })
+  }
 
   function handleLogin({email, password}) {
     signIn(email, password)
-      .then((res) => {
+      .then((data) => {
+        setCurrentUser(data)
         setIsLoggedIn(true)
         setIsRegistrationSuccessful(true)
         setIsToolTipOpen(!isToolTipOpen)
-        navigate.push('/')
+        navigate('/main')
         console.log(`Logged in successfully: ${localStorage}`);
       })
       .catch((err) => {
@@ -167,7 +173,7 @@ function App() {
           if (res) {
             setIsLoggedIn(true)
             setCurrentUser(res);
-            navigate.push('/main') 
+            navigate('/main') 
           }
         })
         .catch((err) => {
@@ -182,11 +188,11 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header email={currentUser.email} logout={handleLogout} />
+        <Header logout={handleLogout} />
         <main className="content">
           <Routes>
-            <Route loggedIn={isLoggedIn} path='/' 
-              element = {<ProtectedRoute destination='/main' loggedIn={isLoggedIn} component={Main} >
+            <Route loggedIn={isLoggedIn} path='/main' 
+              element = {<ProtectedRoute loggedIn={isLoggedIn} component={Main} >
                 <Main 
                   onDeletePlaceClick={handleDeletePlaceClick} 
                   onEditAvatarClick={handleEditAvatarClick} 
@@ -217,11 +223,11 @@ function App() {
                 </Main>
               </ProtectedRoute>} >
             </Route>
-            <Route path='/signup' element={<Register  />} />
-            <Route path='/signin' element={<Login handleLogin={handleLogin} />} />
+            <Route path='/signup' element={<Register handleSubmit={handleRegistration} isSuccessful={isRegistrationSuccessful} isOpen={isToolTipOpen} onClose={closeAllPopups} />} />
+            <Route path='/signin' element={<Login handleLogin={handleLogin} isSuccessful={isRegistrationSuccessful} isOpen={isToolTipOpen} onClose={closeAllPopups} />} />
             <Route exact path='/' element={isLoggedIn ? <Navigate to="/main" /> : <Navigate to="/signin" />} />
           </Routes>
-          <InfoToolTip isSuccessful={isRegistrationSuccessful} isOpen={isToolTipOpen} onClose={closeAllPopups} /> 
+          
         </main>
         <Footer />
       </div>

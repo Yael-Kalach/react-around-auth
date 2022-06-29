@@ -1,10 +1,8 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { register } from '../utils/auth.js';
+import { Link } from 'react-router-dom';
 import InfoToolTip from './InfoToolTip'
 
 function Register (props){
-  const navigate = useNavigate();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
     
@@ -18,15 +16,7 @@ function Register (props){
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    register(setPassword, setEmail).then((res) => {
-      if (res.statusCode === 200) {
-        navigate.push('/login');
-      } else {
-        if (res.statusCode === 400) {
-          console.log('one of the fields was filled in incorrectly');
-        }
-      }
-    });
+    props.handleSubmit(email, password);
   }    
   
   
