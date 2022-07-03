@@ -22,7 +22,6 @@ export const register = (password, email) => {
     .then((res) => {
       return res;
     })
-    .then((err) => console.log(err));
   };
 
 export const signIn = (password, email) => {
@@ -43,7 +42,6 @@ export const signIn = (password, email) => {
       return data;
     }
   })
-  .then(err => console.log(err));
 };
 
 export const checkToken = (token) => {
@@ -61,5 +59,4 @@ export const checkToken = (token) => {
   .then((data) => {
     return data;
   })
-  .then(err => console.log(err));
 }

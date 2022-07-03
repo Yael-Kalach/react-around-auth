@@ -134,11 +134,13 @@ function App() {
       .catch((err) => {
         if (err.status === 400) {
         console.log('400 - one of the fields was filled incorrectly');
-        } else {
-        console.log(`Something is not working... Error: ${err}`);
-        }
         setIsRegistrationSuccessful(false);
         setIsToolTipOpen(!isToolTipOpen)
+        } else {
+        console.log(`Something is not working... Error: ${err}`);
+        setIsRegistrationSuccessful(false);
+        setIsToolTipOpen(!isToolTipOpen)
+        }
       })
   }
 
@@ -178,6 +180,7 @@ function App() {
         })
         .catch((err) => {
           setIsRegistrationSuccessful(false);
+          setIsToolTipOpen(!isToolTipOpen)
           console.log(`Something went wrong! Error: ${err}`);
         })
     }
