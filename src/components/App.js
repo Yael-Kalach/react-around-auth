@@ -10,12 +10,12 @@ import AddPlacePopup from './AddPlacePopup';
 import ProtectedRoute from './ProtectedRoute';
 import Login from './Login';
 import Register from './Register';
-import InfoToolTip from './InfoToolTip';
 import api from '../utils/api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
-import { Route, Routes, Navigate, Router, useNavigate } from 'react-router-dom';
-import {register, signIn, checkToken} from '../utils/auth.js';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { register, signIn, checkToken } from '../utils/auth.js';
+import InfoToolTip from './InfoTooltip'
 
 function App() {
   const navigate = useNavigate();
@@ -148,7 +148,6 @@ function App() {
         setCurrentUser(data)
         setIsLoggedIn(true)
         setIsRegistrationSuccessful(true)
-        setIsToolTipOpen(!isToolTipOpen)
         navigate('/main')
         console.log(`Logged in successfully: ${localStorage}`);
       })
@@ -173,12 +172,12 @@ function App() {
           if (res) {
             setIsLoggedIn(true)
             setCurrentUser(res);
+            setIsToolTipOpen(!isToolTipOpen)
             navigate('/main') 
           }
         })
         .catch((err) => {
           setIsRegistrationSuccessful(false);
-          setIsToolTipOpen(!isToolTipOpen);
           console.log(`Something went wrong! Error: ${err}`);
         })
     }
@@ -223,11 +222,11 @@ function App() {
                 </Main>
               </ProtectedRoute>} >
             </Route>
-            <Route path='/signup' element={<Register handleSubmit={handleRegistration} isSuccessful={isRegistrationSuccessful} isOpen={isToolTipOpen} onClose={closeAllPopups} />} />
-            <Route path='/signin' element={<Login handleLogin={handleLogin} isSuccessful={isRegistrationSuccessful} isOpen={isToolTipOpen} onClose={closeAllPopups} />} />
+            <Route path='/signup' element={<Register handleSubmit={handleRegistration} />} />
+            <Route path='/signin' element={<Login handleLogin={handleLogin} />} />
             <Route exact path='/' element={isLoggedIn ? <Navigate to="/main" /> : <Navigate to="/signin" />} />
           </Routes>
-          
+          <InfoToolTip isSuccessful={isRegistrationSuccessful} isOpen={isToolTipOpen} onClose={closeAllPopups} />
         </main>
         <Footer />
       </div>

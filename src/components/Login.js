@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import InfoToolTip from './InfoToolTip'
 
 function Login (props) {
   const [email, setEmail] = React.useState();
@@ -32,7 +31,6 @@ function Login (props) {
         </fieldset>
         <Link to="/signup" className="registration-form__link">Not a member yet? Sign up here!</Link>
       </form>
-      <InfoToolTip isSuccessful={props.isSuccessful} isOpen={props.isOpen} onClose={props.onClose} />
     </div>
   )
   

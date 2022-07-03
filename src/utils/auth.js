@@ -1,5 +1,12 @@
 export const BASE_URL = 'https://register.nomoreparties.co';
 
+const checkResponse = (res) => {
+  if (res.ok) {
+    return res.json();
+  }
+  return Promise.reject(`Error ${res.status}`);
+}
+
 export const register = (password, email) => {
     return fetch(`${BASE_URL}/signup`, {
       method: 'POST',
@@ -10,14 +17,12 @@ export const register = (password, email) => {
       body: JSON.stringify({password, email})
     })
     .then((res) => {
-      if (res.status === 201) {
-          return res.json();
-      }
+      checkResponse(res)
     })
     .then((res) => {
       return res;
     })
-    .catch((err) => console.log(err));
+    .then((err) => console.log(err));
   };
 
 export const signIn = (password, email) => {
@@ -29,14 +34,16 @@ export const signIn = (password, email) => {
     },
     body: JSON.stringify({password, email})
   })
-  .then((res => res.json()))
+  .then((res) => {
+    checkResponse(res)
+  })
   .then((data) => {
     if (data.token) {
       localStorage.setItem('jwt', data.token);
       return data;
     }
   })
-  .catch(err => console.log(err));
+  .then(err => console.log(err));
 };
 
 export const checkToken = (token) => {
@@ -49,12 +56,10 @@ export const checkToken = (token) => {
     }
   })
   .then((res) => {
-    if (res.status === 200) {
-        return res.json();
-    }
+    checkResponse(res)
   })
   .then((data) => {
     return data;
   })
-  .catch(err => console.log(err));
+  .then(err => console.log(err));
 }
