@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function Main(props) {
@@ -8,7 +8,7 @@ function Main(props) {
     <main className="content">
       <section className="profile">
         <div className="profile__avatar">
-          <div className="profile__picture" style={{ backgroundImage: `url(${currentUser.avatar})` }} alt="Profile Picture" />
+          <div className="profile__picture" style={{ backgroundImage: `url(${currentUser.avatar})` }} alt={`${currentUser.name}'s avatar`} />
           <button type="button" aria-label="avatar" className="profile__button profile__button_type_avatar" onClick={props.onEditAvatarClick}></button>
         </div>
         <div className="profile__info">
@@ -21,7 +21,6 @@ function Main(props) {
       <section className="elements">
         {props.cards}
       </section>
-        {props.children}
     </main>
   )
 }

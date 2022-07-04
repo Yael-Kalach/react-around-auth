@@ -18,19 +18,23 @@ import { register, signIn, checkToken } from '../utils/auth.js';
 import InfoToolTip from './InfoTooltip'
 
 function App() {
+  // navigation
   const navigate = useNavigate();
-
+  // user and registration states
+  const [currentUser, setCurrentUser] = React.useState({});
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+  const [isRegistrationSuccessful, setIsRegistrationSuccessful] = React.useState(false)
+  // card states
+  const [selectedCard, setSelectedCard] = React.useState(null);
+  const [cards, setCards] = React.useState([])
+  // popup states
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false)
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false)
   const [isDeletePlacePopupOpen, setIsDeletePlacePopupOpen] = React.useState(false)
   const [isToolTipOpen, setIsToolTipOpen] = React.useState(false)
-  const [selectedCard, setSelectedCard] = React.useState(null);
-  const [cards, setCards] = React.useState([])
-  const [currentUser, setCurrentUser] = React.useState({});
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false)
-  const [isRegistrationSuccessful, setIsRegistrationSuccessful] = React.useState(false)
 
+  // user info
   React.useEffect(() => {
     api.getUserInformation()
       .then((userData) => {
@@ -38,7 +42,7 @@ function App() {
       })
       .catch(console.log)
   }, [])
-
+  // initial cards
   React.useEffect(() => {
     api
       .getInitialCards()
@@ -47,7 +51,7 @@ function App() {
       })
       .catch((error) => console.log(error));
   }, []);
-
+  // card related functions
   function handleCardLike(card) {
     const isLiked = card.likes.some((user) => user._id === currentUser._id);
     api.changeLikeCardStatus(card._id, !isLiked)
@@ -79,7 +83,8 @@ function App() {
   function handleCardClick(card) {
     setSelectedCard(card)
   }
-
+  
+  // popup handlers
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen)
   }
@@ -105,6 +110,7 @@ function App() {
     setSelectedCard(null);
   }
 
+  // user update handlers
   function handleUpdateUser(data) {
     api.editUserInformation(data)
       .then((userData) => {
@@ -112,6 +118,7 @@ function App() {
       })
       .then(closeAllPopups)
       .catch(console.log)
+      .catch((err) => console.log(err))
   }
 
   function handleUpdateAvatar(data) {
@@ -120,9 +127,10 @@ function App() {
         setCurrentUser(userData)
       })
       .then(closeAllPopups)
-      .catch(console.log)
+      .catch((err) => console.log(err))
   }
 
+  // registration related handlers
   function handleRegistration({email, password}) {
     register(email, password)
       .then((res) => {
@@ -200,9 +208,6 @@ function App() {
                   onEditAvatarClick={handleEditAvatarClick} 
                   onEditProfileClick={handleEditProfileClick} 
                   onAddPlaceClick={handleAddPlaceClick} 
-                  avatar={currentUser.avatar}
-                  name={currentUser.name}
-                  about={currentUser.about}
                   cards={cards.map((card) => (<Card 
                     key={card._id}
                     card={card}
@@ -210,26 +215,26 @@ function App() {
                     onCardLike={handleCardLike}
                     onCardDelete={handleCardDelete}
                   />))} 
-                >
-
-                  <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onSubmitCard={handleAddPlaceSubmit} />
-
-                  <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
-
-                  <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
-
-                  <PopupWithForm name='delete-card' title='Are you sure?' isOpen={isDeletePlacePopupOpen} onClose={closeAllPopups} buttonText='Yes' />
-
-                  <ImagePopup isOpen={selectedCard} onClose={closeAllPopups} card={selectedCard} />
-
-                </Main>
+                />
               </ProtectedRoute>} >
             </Route>
-            <Route path='/signup' element={<Register handleSubmit={handleRegistration} />} />
+            <Route path='/signup' element={<Register handleRegister={handleRegistration} />} />
             <Route path='/signin' element={<Login handleLogin={handleLogin} />} />
             <Route exact path='/' element={isLoggedIn ? <Navigate to="/main" /> : <Navigate to="/signin" />} />
           </Routes>
+
           <InfoToolTip isSuccessful={isRegistrationSuccessful} isOpen={isToolTipOpen} onClose={closeAllPopups} />
+
+          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onSubmitCard={handleAddPlaceSubmit} />
+
+          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+
+          <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+
+          <PopupWithForm name='delete-card' title='Are you sure?' isOpen={isDeletePlacePopupOpen} onClose={closeAllPopups} buttonText='Yes' onSubmit={handleCardDelete} />
+
+          <ImagePopup isOpen={selectedCard} onClose={closeAllPopups} card={selectedCard} />
+          
         </main>
         <Footer />
       </div>

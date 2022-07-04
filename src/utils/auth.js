@@ -19,9 +19,6 @@ export const register = (password, email) => {
     .then((res) => {
       checkResponse(res)
     })
-    .then((res) => {
-      return res;
-    })
   };
 
 export const signIn = (password, email) => {
@@ -36,12 +33,6 @@ export const signIn = (password, email) => {
   .then((res) => {
     checkResponse(res)
   })
-  .then((data) => {
-    if (data.token) {
-      localStorage.setItem('jwt', data.token);
-      return data;
-    }
-  })
 };
 
 export const checkToken = (token) => {
@@ -55,8 +46,5 @@ export const checkToken = (token) => {
   })
   .then((res) => {
     checkResponse(res)
-  })
-  .then((data) => {
-    return data;
   })
 }
