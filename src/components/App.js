@@ -11,7 +11,7 @@ import ProtectedRoute from './ProtectedRoute';
 import Login from './Login';
 import Register from './Register';
 import api from '../utils/api';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import CurrentUserContext from '../contexts/CurrentUserContext';
 import Card from './Card';
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { register, signIn, checkToken } from '../utils/auth.js';
@@ -34,23 +34,93 @@ function App() {
   const [isDeletePlacePopupOpen, setIsDeletePlacePopupOpen] = React.useState(false)
   const [isToolTipOpen, setIsToolTipOpen] = React.useState(false)
 
-  // user info
+  // registration related handlers
+  function handleRegistration({email, password}) {
+    register(email, password)
+      .then((res) => {
+        console.log(res)
+        setIsRegistrationSuccessful(true)
+        setIsToolTipOpen(!isToolTipOpen)
+        navigate('/signin')
+      })
+      .catch((err) => {
+        if (err.status === 400) {
+        console.log('400 - one of the fields was filled incorrectly');
+        setIsRegistrationSuccessful(false);
+        setIsToolTipOpen(!isToolTipOpen)
+        } else {
+        console.log(`Something is not working... Error: ${err}`);
+        setIsRegistrationSuccessful(false);
+        setIsToolTipOpen(!isToolTipOpen)
+        }
+      })
+  }
+
+  function handleLogin({email, password}) {
+    signIn(email, password)
+      .then((data) => {
+        setCurrentUser(data)
+        setIsLoggedIn(true)
+        setIsRegistrationSuccessful(true)
+        navigate('/main')
+        console.log(`Logged in successfully: ${localStorage}`);
+      })
+      .catch((err) => {
+        if (err.status === 400) {
+          console.log('400 - one of the fields was filled incorrectly');
+          setIsRegistrationSuccessful(false);
+          setIsToolTipOpen(!isToolTipOpen)
+          } else {
+          console.log(`Something is not working... Error: ${err}`);
+          setIsRegistrationSuccessful(false);
+          setIsToolTipOpen(!isToolTipOpen)
+          }
+      })
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('jwt');
+    setIsLoggedIn(false);
+    console.log(`Logged out successfully: ${localStorage}`);
+  }
+  // Token mounting
   React.useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    !isLoggedIn && 
+      jwt && 
+      checkToken(jwt)
+        .then((res) => {
+          if (res) {
+            setIsLoggedIn(true)
+            setCurrentUser(res);
+            setIsToolTipOpen(!isToolTipOpen)
+            navigate('/main') 
+          }
+        })
+        .catch((err) => {
+          setIsRegistrationSuccessful(false);
+          setIsToolTipOpen(!isToolTipOpen)
+          console.log(`Something went wrong! Error: ${err}`);
+        })
+  }, [isLoggedIn]);
+  // user info mounting
+  React.useEffect(() => {
+    isLoggedIn &&
     api.getUserInformation()
       .then((userData) => {
         setCurrentUser(userData)
       })
       .catch(console.log)
-  }, [])
-  // initial cards
+  }, [isLoggedIn])
+  // initial cards mounting
   React.useEffect(() => {
-    api
-      .getInitialCards()
+    isLoggedIn &&
+    api.getInitialCards()
       .then((cardData) => {
         setCards(cardData);
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [isLoggedIn]);
   // card related functions
   function handleCardLike(card) {
     const isLiked = card.likes.some((user) => user._id === currentUser._id);
@@ -129,71 +199,6 @@ function App() {
       .then(closeAllPopups)
       .catch((err) => console.log(err))
   }
-
-  // registration related handlers
-  function handleRegistration({email, password}) {
-    register(email, password)
-      .then((res) => {
-        console.log(res)
-        setIsRegistrationSuccessful(true)
-        setIsToolTipOpen(!isToolTipOpen)
-        navigate('/signin')
-      })
-      .catch((err) => {
-        if (err.status === 400) {
-        console.log('400 - one of the fields was filled incorrectly');
-        setIsRegistrationSuccessful(false);
-        setIsToolTipOpen(!isToolTipOpen)
-        } else {
-        console.log(`Something is not working... Error: ${err}`);
-        setIsRegistrationSuccessful(false);
-        setIsToolTipOpen(!isToolTipOpen)
-        }
-      })
-  }
-
-  function handleLogin({email, password}) {
-    signIn(email, password)
-      .then((data) => {
-        setCurrentUser(data)
-        setIsLoggedIn(true)
-        setIsRegistrationSuccessful(true)
-        navigate('/main')
-        console.log(`Logged in successfully: ${localStorage}`);
-      })
-      .catch((err) => {
-        setIsRegistrationSuccessful(false)
-        setIsToolTipOpen(!isToolTipOpen)
-        console.log(`Something went wrong! Error: ${err}`);
-      })
-  }
-
-  function handleLogout() {
-    localStorage.removeItem('jwt');
-    setIsLoggedIn(false);
-    console.log(`Logged out successfully: ${localStorage}`);
-  }
-  // Token mounting
-  React.useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt) {
-      checkToken(jwt)
-        .then((res) => {
-          if (res) {
-            setIsLoggedIn(true)
-            setCurrentUser(res);
-            setIsToolTipOpen(!isToolTipOpen)
-            navigate('/main') 
-          }
-        })
-        .catch((err) => {
-          setIsRegistrationSuccessful(false);
-          setIsToolTipOpen(!isToolTipOpen)
-          console.log(`Something went wrong! Error: ${err}`);
-        })
-    }
-  }, [isLoggedIn]);
-
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
