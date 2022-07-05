@@ -2,9 +2,11 @@ import React from "react"
 import PopupWithForm from "./PopupWithForm";
 
 function AddPlacePopup ({onSubmitCard, isOpen, onClose}){
+  // States
   const [name, setName] = React.useState('')
   const [link, setLink] = React.useState('')
-
+  
+  // Handlers
   function handleAddLink(e) {
     setLink(e.target.value);
   }
@@ -21,7 +23,8 @@ function AddPlacePopup ({onSubmitCard, isOpen, onClose}){
         link: link,
       });
   } 
-
+  
+  // Form reset
   React.useEffect(() => {
     if (isOpen) {
       setName(''); 

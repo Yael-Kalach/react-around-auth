@@ -1,7 +1,8 @@
+import React from 'react';
 import logo from '../images/header-assets/logo.svg'
 import {  NavLink, useLocation } from 'react-router-dom';
 
-function Header(isLoggedIn, logout, user) {
+function Header(isLoggedIn, logout, email) {
   const { pathname } = useLocation();
 
   return(
@@ -13,7 +14,7 @@ function Header(isLoggedIn, logout, user) {
           : (pathname === '/signin' ? 
             <NavLink to="/signup" className="header__link">Sign up</NavLink> 
           : <NavLink to="/signin" className="header__link">Log in</NavLink>)}
-        {isLoggedIn ? <p></p> : ''}
+        {isLoggedIn ? <p>{email}</p> : ''}
       </div>
     </header>
   )

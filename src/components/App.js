@@ -173,7 +173,7 @@ function App() {
     setIsLoggedIn(false);
     console.log(`Logged out successfully: ${localStorage}`);
   }
-
+  // Token mounting
   React.useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     if (jwt) {
