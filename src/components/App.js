@@ -36,7 +36,7 @@ function App() {
 
   // registration related handlers
   function handleRegistration({email, password}) {
-    register(email, password)
+    register({email, password})
       .then((res) => {
         console.log(res)
         setIsRegistrationSuccessful(true)
@@ -48,7 +48,13 @@ function App() {
         console.log('400 - one of the fields was filled incorrectly');
         setIsRegistrationSuccessful(false);
         setIsToolTipOpen(!isToolTipOpen)
-        } else {
+        } 
+        if (err.status === 500) {
+          console.log('500 - Server issue');
+          setIsRegistrationSuccessful(false);
+          setIsToolTipOpen(!isToolTipOpen)
+        }
+        else {
         console.log(`Something is not working... Error: ${err}`);
         setIsRegistrationSuccessful(false);
         setIsToolTipOpen(!isToolTipOpen)
@@ -57,7 +63,7 @@ function App() {
   }
 
   function handleLogin({email, password}) {
-    signIn(email, password)
+    signIn({email, password})
       .then((data) => {
         setCurrentUser(data)
         setIsLoggedIn(true)

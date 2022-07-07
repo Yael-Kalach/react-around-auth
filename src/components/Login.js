@@ -15,7 +15,7 @@ function Login (props) {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    props.handleLogin(email, password);
+    props.handleLogin({email, password});
 }
 
   return (
@@ -25,7 +25,7 @@ function Login (props) {
         <fieldset className="registration-form__fieldset">
           <input id='email-input' type='email' name='email' placeholder='Email' value={email || ''} onChange={onChangeEmail} className='registration-form__input_type_name registration-form__input' required minLength='2' maxLength='40' />
           <span id="email-input-error" className="registration-form__error"></span>
-          <input id='password-input' type='password' name='password' placeholder='Password' value={password || ''} onChange={onChangePassword} className='registration-form__input_type_about registration-form__input' required minLength='2' maxLength='40' />
+          <input id='password-input' type='password' name='password' placeholder='Password' value={password || ''} onChange={onChangePassword} className='registration-form__input_type_about registration-form__input' required minLength="8" maxLength="18" />
           <span id="password-input-error" className="registration-form__error"></span>
           <button type="submit" aria-label="save" className="registration-form__button">Log in</button>
         </fieldset>
