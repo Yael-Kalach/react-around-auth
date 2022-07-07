@@ -35,8 +35,8 @@ function App() {
   const [isToolTipOpen, setIsToolTipOpen] = React.useState(false)
 
   // registration related handlers
-  function handleRegistration({email, password}) {
-    register({email, password})
+  function handleRegistration({password, email}) {
+    register({password, email})
       .then((res) => {
         console.log(res)
         setIsRegistrationSuccessful(true)
@@ -62,8 +62,8 @@ function App() {
       })
   }
 
-  function handleLogin({email, password}) {
-    signIn({email, password})
+  function handleLogin({password, email}) {
+    signIn({password, email})
       .then((data) => {
         setCurrentUser(data)
         setIsLoggedIn(true)
