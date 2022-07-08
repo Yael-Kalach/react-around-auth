@@ -16,9 +16,7 @@ export const register = ({password, email}) => {
       },
       body: JSON.stringify({password, email})
     })
-    .then((res) => {
-      checkResponse(res)
-    })
+    .then(res => {checkResponse(res)})
   };
 
 export const signIn = ({password, email}) => {
@@ -30,9 +28,7 @@ export const signIn = ({password, email}) => {
     },
     body: JSON.stringify({password, email})
   })
-  .then((res) => {
-    checkResponse(res)
-  })
+  .then(res => {checkResponse(res)})
 };
 
 export const checkToken = (token) => {
@@ -44,7 +40,5 @@ export const checkToken = (token) => {
       'Authorization': `Bearer ${token}`,
     }
   })
-  .then((res) => {
-    checkResponse(res)
-  })
+  .then(res => {checkResponse(res)})
 }

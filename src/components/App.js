@@ -35,8 +35,8 @@ function App() {
   const [isToolTipOpen, setIsToolTipOpen] = React.useState(false)
 
   // registration related handlers
-  function handleRegistration({password, email}) {
-    register({password, email})
+  function handleRegistration(password, email) {
+    register(password, email)
       .then((res) => {
         console.log(res)
         setIsRegistrationSuccessful(true)
@@ -45,31 +45,37 @@ function App() {
       })
       .catch((err) => {
         if (err.status === 400) {
-        console.log('400 - one of the fields was filled incorrectly');
-        setIsRegistrationSuccessful(false);
-        setIsToolTipOpen(!isToolTipOpen)
+          console.log('400 - one of the fields was filled incorrectly');
+          setIsRegistrationSuccessful(false);
+          setIsToolTipOpen(!isToolTipOpen)
         } 
+        if (err.status === 401) {
+          console.log("401 - the user with the specified email not found");
+          setIsRegistrationSuccessful(false);
+          setIsToolTipOpen(!isToolTipOpen)
+        }
         if (err.status === 500) {
           console.log('500 - Server issue');
           setIsRegistrationSuccessful(false);
           setIsToolTipOpen(!isToolTipOpen)
         }
         else {
-        console.log(`Something is not working... Error: ${err}`);
-        setIsRegistrationSuccessful(false);
-        setIsToolTipOpen(!isToolTipOpen)
+          console.log(`Something is not working... Error: ${err}`);
+          setIsRegistrationSuccessful(false);
+          setIsToolTipOpen(!isToolTipOpen)
         }
       })
   }
 
-  function handleLogin({password, email}) {
-    signIn({password, email})
-      .then((data) => {
-        setCurrentUser(data)
+  function handleLogin(password, email) {
+    signIn(password, email)
+      .then((res) => {
+        localStorage.setItem('jwt', res);
+        setCurrentUser({ ...currentUser, email });
         setIsLoggedIn(true)
         setIsRegistrationSuccessful(true)
         navigate('/main')
-        console.log(`Logged in successfully: ${localStorage}`);
+        console.log(`Logged in successfully: ${currentUser}`);
       })
       .catch((err) => {
         if (err.status === 400) {
@@ -77,9 +83,9 @@ function App() {
           setIsRegistrationSuccessful(false);
           setIsToolTipOpen(!isToolTipOpen)
           } else {
-          console.log(`Something is not working... Error: ${err}`);
-          setIsRegistrationSuccessful(false);
-          setIsToolTipOpen(!isToolTipOpen)
+            console.log(`Something is not working... Error: ${err}`);
+            setIsRegistrationSuccessful(false);
+            setIsToolTipOpen(!isToolTipOpen)
           }
       })
   }
@@ -87,6 +93,7 @@ function App() {
   function handleLogout() {
     localStorage.removeItem('jwt');
     setIsLoggedIn(false);
+    setCurrentUser({});
     console.log(`Logged out successfully: ${localStorage}`);
   }
   // Token mounting
@@ -189,8 +196,8 @@ function App() {
   // user update handlers
   function handleUpdateUser(data) {
     api.editUserInformation(data)
-      .then((userData) => {
-        setCurrentUser(userData)
+      .then((res) => {
+        setCurrentUser({ ...currentUser, ...res })
       })
       .then(closeAllPopups)
       .catch(console.log)
@@ -199,8 +206,8 @@ function App() {
 
   function handleUpdateAvatar(data) {
     api.editUserAvatar(data)
-      .then((userData) => {
-        setCurrentUser(userData)
+      .then((res) => {
+        setCurrentUser({ ...currentUser, ...res })
       })
       .then(closeAllPopups)
       .catch((err) => console.log(err))
