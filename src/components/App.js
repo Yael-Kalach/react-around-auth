@@ -40,54 +40,45 @@ function App() {
       .then((res) => {
         console.log(res)
         setIsRegistrationSuccessful(true)
-        setIsToolTipOpen(!isToolTipOpen)
+        
         navigate('/signin')
       })
       .catch((err) => {
+        setIsRegistrationSuccessful(false);
         if (err.status === 400) {
           console.log('400 - one of the fields was filled incorrectly');
-          setIsRegistrationSuccessful(false);
-          setIsToolTipOpen(!isToolTipOpen)
         } 
         if (err.status === 401) {
           console.log("401 - the user with the specified email not found");
-          setIsRegistrationSuccessful(false);
-          setIsToolTipOpen(!isToolTipOpen)
-        }
-        if (err.status === 500) {
-          console.log('500 - Server issue');
-          setIsRegistrationSuccessful(false);
-          setIsToolTipOpen(!isToolTipOpen)
         }
         else {
           console.log(`Something is not working... Error: ${err}`);
-          setIsRegistrationSuccessful(false);
-          setIsToolTipOpen(!isToolTipOpen)
         }
       })
+      .finally(setIsToolTipOpen(!isToolTipOpen))
   }
 
   function handleLogin(password, email) {
     signIn(password, email)
-      .then((res) => {
-        localStorage.setItem('jwt', res);
+      .then((token) => {
+        localStorage.setItem('jwt', token);
         setCurrentUser({ ...currentUser, email });
         setIsLoggedIn(true)
         setIsRegistrationSuccessful(true)
-        navigate('/main')
+        navigate('/')
         console.log(`Logged in successfully: ${currentUser}`);
       })
       .catch((err) => {
+        setIsRegistrationSuccessful(false);
         if (err.status === 400) {
           console.log('400 - one of the fields was filled incorrectly');
-          setIsRegistrationSuccessful(false);
           setIsToolTipOpen(!isToolTipOpen)
           } else {
             console.log(`Something is not working... Error: ${err}`);
-            setIsRegistrationSuccessful(false);
             setIsToolTipOpen(!isToolTipOpen)
           }
       })
+      .finally(setIsToolTipOpen(!isToolTipOpen))
   }
 
   function handleLogout() {
@@ -104,10 +95,10 @@ function App() {
       checkToken(jwt)
         .then((res) => {
           if (res) {
+            setCurrentUser(res.data);
             setIsLoggedIn(true)
-            setCurrentUser(res);
             setIsToolTipOpen(!isToolTipOpen)
-            navigate('/main') 
+            navigate('/') 
           }
         })
         .catch((err) => {
@@ -193,6 +184,16 @@ function App() {
     setSelectedCard(null);
   }
 
+  React.useEffect(() => {
+    const closeByEscape = (e) => {
+      if (e.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    document.addEventListener('keydown', closeByEscape)
+    return () => document.removeEventListener('keydown', closeByEscape)
+  }, [])
+
   // user update handlers
   function handleUpdateUser(data) {
     api.editUserInformation(data)
@@ -200,7 +201,6 @@ function App() {
         setCurrentUser({ ...currentUser, ...res })
       })
       .then(closeAllPopups)
-      .catch(console.log)
       .catch((err) => console.log(err))
   }
 
@@ -216,10 +216,10 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header logout={handleLogout} />
+        <Header isLoggedIn={isLoggedIn} logout={handleLogout} />
         <main className="content">
           <Routes>
-            <Route loggedIn={isLoggedIn} path='/main' 
+            <Route loggedIn={isLoggedIn} path='/' 
               element = {<ProtectedRoute loggedIn={isLoggedIn} component={Main} >
                 <Main 
                   onDeletePlaceClick={handleDeletePlaceClick} 

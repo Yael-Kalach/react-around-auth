@@ -10,7 +10,7 @@ function PopupWithForm(props) {
         <div className={overlayName} onClick={props.onClose}></div>
         <div className={containerName}>
           <button type="button" aria-label="close" className={closeButtonName} onClick={props.onClose}></button>
-          <form name="form" onSubmit={props.onSubmit} className={formName}>
+          <form name={`${props.name}`} onSubmit={props.onSubmit} className={formName}>
             <h2 className="form__title">{popupTitle}</h2>
             <fieldset className="form__fieldset">
               {props.children}
