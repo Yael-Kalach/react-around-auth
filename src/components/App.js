@@ -40,7 +40,6 @@ function App() {
       .then((res) => {
         console.log(res)
         setIsRegistrationSuccessful(true)
-        
         navigate('/signin')
       })
       .catch((err) => {
@@ -60,8 +59,8 @@ function App() {
 
   function handleLogin(password, email) {
     signIn(password, email)
-      .then((token) => {
-        localStorage.setItem('jwt', token);
+      .then((data) => {
+        localStorage.setItem("jwt", data);
         setCurrentUser({ ...currentUser, email });
         setIsLoggedIn(true)
         setIsRegistrationSuccessful(true)
@@ -82,31 +81,25 @@ function App() {
   }
 
   function handleLogout() {
-    localStorage.removeItem('jwt');
+    localStorage.removeItem("jwt");
     setIsLoggedIn(false);
     setCurrentUser({});
     console.log(`Logged out successfully: ${localStorage}`);
   }
   // Token mounting
   React.useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    !isLoggedIn && 
-      jwt && 
+    const jwt = localStorage.getItem("jwt");
+      jwt &&
       checkToken(jwt)
         .then((res) => {
-          if (res) {
-            setCurrentUser(res.data);
-            setIsLoggedIn(true)
-            setIsToolTipOpen(!isToolTipOpen)
-            navigate('/') 
-          }
+          setCurrentUser(res.data);
+          setIsLoggedIn(true);
+          navigate("/");
         })
         .catch((err) => {
-          setIsRegistrationSuccessful(false);
-          setIsToolTipOpen(!isToolTipOpen)
-          console.log(`Something went wrong! Error: ${err}`);
-        })
-  }, [isLoggedIn]);
+          console.log(err);
+        });
+  }, []);
   // user info mounting
   React.useEffect(() => {
     isLoggedIn &&
