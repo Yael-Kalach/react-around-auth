@@ -59,13 +59,13 @@ function App() {
 
   function handleLogin(password, email) {
     signIn(password, email)
-      .then((data) => {
-        localStorage.setItem("jwt", data);
-        setCurrentUser({ ...currentUser, email });
-        setIsLoggedIn(true)
-        setIsRegistrationSuccessful(true)
-        navigate('/')
-        console.log(`Logged in successfully: ${currentUser}`);
+      .then((response) => {
+          localStorage.setItem("jwt", response);
+          setCurrentUser({ ...currentUser, email });
+          setIsLoggedIn(true)
+          setIsRegistrationSuccessful(true)
+          navigate('/')
+          console.log(`Logged in successfully: ${currentUser}`);
       })
       .catch((err) => {
         setIsRegistrationSuccessful(false);
@@ -81,9 +81,9 @@ function App() {
   }
 
   function handleLogout() {
-    localStorage.removeItem("jwt");
     setIsLoggedIn(false);
     setCurrentUser({});
+    localStorage.removeItem("jwt");
     console.log(`Logged out successfully: ${localStorage}`);
   }
   // Token mounting
@@ -92,8 +92,10 @@ function App() {
       jwt &&
       checkToken(jwt)
         .then((res) => {
-          setCurrentUser(res.data);
-          setIsLoggedIn(true);
+          if (res) {
+            setIsLoggedIn(true);
+            setCurrentUser(res);
+          }
           navigate("/");
         })
         .catch((err) => {
