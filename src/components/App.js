@@ -54,30 +54,28 @@ function App() {
           console.log(`Something is not working... Error: ${err}`);
         }
       })
-      .finally(setIsToolTipOpen(!isToolTipOpen))
+      .finally(() => setIsToolTipOpen(!isToolTipOpen))
   }
 
   function handleLogin(password, email) {
     signIn(password, email)
       .then((response) => {
-          localStorage.setItem("jwt", response);
+          localStorage.setItem("jwt", response.token)
           setCurrentUser({ ...currentUser, email });
           setIsLoggedIn(true)
-          setIsRegistrationSuccessful(true)
           navigate('/')
+          console.log(response)
           console.log(`Logged in successfully: ${currentUser}`);
       })
       .catch((err) => {
         setIsRegistrationSuccessful(false);
+        setIsToolTipOpen(!isToolTipOpen)
         if (err.status === 400) {
           console.log('400 - one of the fields was filled incorrectly');
-          setIsToolTipOpen(!isToolTipOpen)
           } else {
             console.log(`Something is not working... Error: ${err}`);
-            setIsToolTipOpen(!isToolTipOpen)
           }
       })
-      .finally(setIsToolTipOpen(!isToolTipOpen))
   }
 
   function handleLogout() {
@@ -95,7 +93,9 @@ function App() {
           if (res) {
             setIsLoggedIn(true);
             setCurrentUser(res);
+            console.log(res)
           }
+          console.log(res)
           navigate("/");
         })
         .catch((err) => {
@@ -107,7 +107,7 @@ function App() {
     isLoggedIn &&
     api.getUserInformation()
       .then((userData) => {
-        setCurrentUser(userData)
+        setCurrentUser({ ...currentUser, ...userData})
       })
       .catch(console.log)
   }, [isLoggedIn])
@@ -211,7 +211,7 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header isLoggedIn={isLoggedIn} logout={handleLogout} />
+        <Header isLoggedIn={isLoggedIn} currentUser={currentUser} logout={handleLogout} />
         <main className="content">
           <Routes>
             <Route loggedIn={isLoggedIn} path='/' 

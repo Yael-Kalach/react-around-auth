@@ -1,17 +1,17 @@
 .header__link{
-    font-family: Inter;
     font-size: 18px;
     font-weight: 500;
     line-height: 1.2;
     text-align: right;
     text-decoration: none;
-    color: white;
+    color: rgba(255, 255, 255, 0.7);
     transition: 0.1s linear 0.1s;
     background-color: transparent;
+    margin-left: 12px;
 }
 
 .header__link:hover{
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.55);
 }
 
 @media screen and (max-width: 640px){

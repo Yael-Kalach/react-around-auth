@@ -7,28 +7,30 @@ const checkResponse = (res) => {
   return Promise.reject(`Error ${res.status}`);
 }
 
-export const register = ({password, email}) => {
+export const register = ({ password, email }) => {
     return fetch(`${BASE_URL}/signup`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({password, email})
+      body: JSON.stringify({ password, email })
     })
-    .then(res => {checkResponse(res)})
+    .then(res => {return checkResponse(res)})
   };
 
-export const signIn = ({password, email}) => {
+export const signIn = ({ password, email }) => {
   return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({password, email})
+    body: JSON.stringify({ password, email })
   })
-  .then(res => {checkResponse(res)})
+  .then(res => {
+    console.log("res: ", res)
+    return checkResponse(res)})
 };
 
 export const checkToken = (token) => {
@@ -40,5 +42,5 @@ export const checkToken = (token) => {
       'Authorization': `Bearer ${token}`,
     }
   })
-  .then(res => {checkResponse(res)})
+  .then(res => {return checkResponse(res)})
 }
