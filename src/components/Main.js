@@ -8,7 +8,7 @@ function Main(props) {
     <main className="content">
       <section className="profile">
         <div className="profile__avatar">
-          <div className="profile__picture" style={{ backgroundImage: `url(${currentUser.avatar})` }} alt={`${currentUser.name}'s avatar`} />
+          <div className="profile__picture" style={{ backgroundImage: `url(${currentUser.avatar})`, backgroundSize: 'cover', backgroundPosition: 'center'}} alt={`${currentUser.name}'s avatar`} />
           <button type="button" aria-label="avatar" className="profile__button profile__button_type_avatar" onClick={props.onEditAvatarClick}></button>
         </div>
         <div className="profile__info">

@@ -60,11 +60,11 @@ function App() {
   function handleLogin(password, email) {
     signIn(password, email)
       .then((response) => {
-          localStorage.setItem("jwt", response.token)
-          setCurrentUser({ ...currentUser, email });
-          setIsLoggedIn(true)
-          navigate('/')
-          console.log(response)
+          localStorage.setItem("jwt", response.token);
+          setCurrentUser({ ...currentUser, data: { email: email } });
+          setIsLoggedIn(true);
+          navigate('/');
+          console.log(response);
           console.log(`Logged in successfully: ${currentUser}`);
       })
       .catch((err) => {

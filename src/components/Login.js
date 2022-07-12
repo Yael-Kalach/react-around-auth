@@ -15,8 +15,8 @@ function Login (props) {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    props.handleLogin({password, email});
-}
+    props.handleLogin(password, email);
+};
 
   return (
     <div>

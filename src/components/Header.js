@@ -7,19 +7,19 @@ function Header(props) {
   const { pathname } = useLocation();
   const currentUser = React.useContext(CurrentUserContext);
   return( 
-    <CurrentUserContext.Provider value={currentUser}>
-      <header className="header"> 
-        <img className="header__logo" src={logo} alt="Around the U.S. Logo" /> 
-        <div className="header__nav"> 
-          {pathname === "/" ? <p>{currentUser.data && currentUser.data.email}</p> : ''} 
-          {(props.isLoggedIn && pathname === "/") ? ( 
-            <button onClick={props.logout} className="header__link">Log out</button>)  
-            : (pathname === '/signin' ?  
-              <NavLink to="/signup" className="header__link">Sign up</NavLink>  
-            : <NavLink to="/signin" className="header__link">Log in</NavLink>)} 
-        </div> 
-      </header> 
-    </CurrentUserContext.Provider>
+
+    <header className="header"> 
+      <img className="header__logo" src={logo} alt="Around the U.S. Logo" /> 
+      <div className="header__nav"> 
+        {props.isLoggedIn && pathname === "/" ? <p>{currentUser.data && currentUser.data.email}</p> : ''} 
+        {(props.isLoggedIn && pathname === "/") ? ( 
+          <button onClick={props.logout} className="header__link">Log out</button>)  
+          : (pathname === '/signin' ?  
+            <NavLink to="/signup" className="header__link">Sign up</NavLink>  
+          : <NavLink to="/signin" className="header__link">Log in</NavLink>)} 
+      </div> 
+    </header> 
+
   ) 
 }
 
